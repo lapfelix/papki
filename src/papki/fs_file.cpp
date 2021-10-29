@@ -277,6 +277,7 @@ std::vector<std::string> fs_file::list_dir(size_t max_size)const{
 
 	std::vector<std::string> files;
 
+#if 0 // TODO: remove once the deployment target is iOS 13
 	std::filesystem::directory_iterator iter(this->path());
 
 	for(const auto& p : iter){
@@ -291,8 +292,7 @@ std::vector<std::string> fs_file::list_dir(size_t max_size)const{
 			break;
 		}
 	}
-
-#if 0 // TODO: remove commented code when std::filesystem-based implementation is stable enough
+#else
 #if M_OS == M_OS_WINDOWS
 	{
 		std::string pattern = this->path();
@@ -326,7 +326,7 @@ std::vector<std::string> fs_file::list_dir(size_t max_size)const{
 				}
 				files.push_back(s);
 
-				if (files.size() == maxEntries) {
+				if (files.size() == max_size) {
 					break;
 				}
 			} while (FindNextFile(h, &wfd) != 0);
@@ -386,7 +386,7 @@ std::vector<std::string> fs_file::list_dir(size_t max_size)const{
 
 			files.push_back(s);
 
-			if(files.size() == maxEntries){
+			if(files.size() == max_size){
 				break;
 			}
 		}
